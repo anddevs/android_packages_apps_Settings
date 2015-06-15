@@ -43,6 +43,11 @@
                 android:key="display_rotation"
                 android:fragment="com.android.settings.slim.DisplayRotation"
                 android:title="@string/display_rotation_title" />
+         <ListPreference
+                android:key="lcd_density"
+                android:title="@string/lcd_density"
+                android:persistent="false"
+          />
 
         <ListPreference
                 android:key="screen_timeout"
