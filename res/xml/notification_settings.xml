@@ -136,6 +136,15 @@
                 android:title="@string/manage_notification_access_title"
                 android:persistent="false"
                 android:fragment="com.android.settings.notification.NotificationAccessSettings" />
+        
+         <!-- Heads up -->
+		<SwitchPreference
+            android:key="heads_up_notifications_enabled"
+            android:title="@string/heads_up_notifications"
+            android:summaryOn="@string/summary_heads_up_enabled"
+            android:persistent="true"
+            android:summaryOff="@string/summary_heads_up_disabled" />
+
 
     </PreferenceCategory>
 

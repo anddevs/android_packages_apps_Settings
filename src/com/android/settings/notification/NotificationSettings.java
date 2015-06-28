@@ -44,6 +44,7 @@ import android.preference.PreferenceCategory;
 import android.preference.SeekBarVolumizer;
 import android.preference.TwoStatePreference;
 import android.preference.CheckBoxPreference;
+import android.preference.SwitchPreference;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.provider.SearchIndexableResource;
@@ -80,6 +81,7 @@ public class NotificationSettings extends SettingsPreferenceFragment implements 
     private static final String KEY_LOCK_SCREEN_NOTIFICATIONS = "lock_screen_notifications";
     private static final String KEY_NOTIFICATION_ACCESS = "manage_notification_access";
     private static final String KEY_CHARGING_LIGHT = "charging_light";
+    private static final String KEY_HEADS_UP_NOTIFICATIONS_ENABLED = "heads_up_notifications_enabled";
 
     private static final int SAMPLE_CUTOFF = 2000;  // manually cap sample playback at 2 seconds
 
@@ -111,6 +113,7 @@ public class NotificationSettings extends SettingsPreferenceFragment implements 
     private CheckBoxPreference mVolumeLinkNotification;
     private PreferenceCategory mSoundCategory;
     private Preference mChargingLight;
+    private TwoStatePreference mHeadsUpNotification;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -165,9 +168,12 @@ public class NotificationSettings extends SettingsPreferenceFragment implements 
         initLockscreenNotifications(notification);
 
         mNotificationAccess = findPreference(KEY_NOTIFICATION_ACCESS);
+        mHeadsUpNotification = (TwoStatePreference) findPreference(KEY_HEADS_UP_NOTIFICATIONS_ENABLED);
+        //mHeadsUpNotification.setOnPreferenceChangeListener(this);
         refreshNotificationListeners();
         updateRingerMode();
         updateEffectsSuppressor();
+        updateHeadsUpNotification();
     }
 
     @Override
@@ -425,7 +431,13 @@ public class NotificationSettings extends SettingsPreferenceFragment implements 
         mVibrateWhenRinging.setChecked(Settings.System.getInt(getContentResolver(),
                 Settings.System.VIBRATE_WHEN_RINGING, 0) != 0);
     }
-
+    
+    private void updateHeadsUpNotification() {
+        if (mHeadsUpNotification == null) return;
+        mHeadsUpNotification.setChecked(Settings.Global.getInt(getContentResolver(),
+                Settings.Global.HEADS_UP_NOTIFICATIONS_ENABLED, 0) != 0);
+    }
+    
     // === Pulse notification light ===
 
     private void initPulse(PreferenceCategory parent) {
@@ -601,6 +613,8 @@ public class NotificationSettings extends SettingsPreferenceFragment implements 
                 Settings.Secure.getUriFor(Settings.Secure.LOCK_SCREEN_ALLOW_PRIVATE_NOTIFICATIONS);
         private final Uri LOCK_SCREEN_SHOW_URI =
                 Settings.Secure.getUriFor(Settings.Secure.LOCK_SCREEN_SHOW_NOTIFICATIONS);
+        private final Uri HEADS_UP_NOTIFICATIONS_ENABLED_URI =
+                Settings.Global.getUriFor(Settings.Global.HEADS_UP_NOTIFICATIONS_ENABLED);
 
         public SettingsObserver() {
             super(mHandler);
@@ -613,6 +627,7 @@ public class NotificationSettings extends SettingsPreferenceFragment implements 
                 cr.registerContentObserver(NOTIFICATION_LIGHT_PULSE_URI, false, this);
                 cr.registerContentObserver(LOCK_SCREEN_PRIVATE_URI, false, this);
                 cr.registerContentObserver(LOCK_SCREEN_SHOW_URI, false, this);
+                cr.registerContentObserver(HEADS_UP_NOTIFICATIONS_ENABLED_URI, false, this);
             } else {
                 cr.unregisterContentObserver(this);
             }
@@ -630,9 +645,11 @@ public class NotificationSettings extends SettingsPreferenceFragment implements 
             if (LOCK_SCREEN_PRIVATE_URI.equals(uri) || LOCK_SCREEN_SHOW_URI.equals(uri)) {
                 updateLockscreenNotifications();
             }
+            if(HEADS_UP_NOTIFICATIONS_ENABLED_URI.equals(uri)) {
+				updateHeadsUpNotification();
         }
     }
-
+}
     private final class H extends Handler {
         private static final int UPDATE_PHONE_RINGTONE = 1;
         private static final int UPDATE_NOTIFICATION_RINGTONE = 2;

@@ -335,6 +335,10 @@
             android:key="show_all_anrs"
             android:title="@string/show_all_anrs"
             android:summary="@string/show_all_anrs_summary"/>
+            
+            <SwitchPreference
+            android:key="kill_app_back_key"
+            android:title="@string/kill_app_back_key"/>
 
      </PreferenceCategory>
 

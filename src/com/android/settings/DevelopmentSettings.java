@@ -177,6 +177,8 @@ public class DevelopmentSettings extends SettingsPreferenceFragment
     private static final int REQUEST_CODE_ENABLE_OEM_UNLOCK = 0;
 
     private static String DEFAULT_LOG_RING_BUFFER_SIZE_IN_BYTES = "262144"; // 256K
+    
+    private static String KILL_APP_BACK_KEY="kill_app_back_key";
 
     private IWindowManager mWindowManager;
     private IBackupManager mBackupManager;
@@ -244,6 +246,7 @@ public class DevelopmentSettings extends SettingsPreferenceFragment
 
     private SwitchPreference mShowAllANRs;
     private SwitchPreference mAdvancedReboot;
+    private SwitchPreference mKillAppBackKeyPress;
 
     private PreferenceScreen mProcessStats;
     private final ArrayList<Preference> mAllPrefs = new ArrayList<Preference>();
@@ -377,7 +380,10 @@ public class DevelopmentSettings extends SettingsPreferenceFragment
                 SHOW_ALL_ANRS_KEY);
         mAllPrefs.add(mShowAllANRs);
         mResetSwitchPrefs.add(mShowAllANRs);
-
+		mKillAppBackKeyPress = (SwitchPreference) findPreference(
+                KILL_APP_BACK_KEY);
+        mAllPrefs.add(mKillAppBackKeyPress);
+         mResetSwitchPrefs.add(mKillAppBackKeyPress);
         Preference hdcpChecking = findPreference(HDCP_CHECKING_KEY);
         if (hdcpChecking != null) {
             mAllPrefs.add(hdcpChecking);
